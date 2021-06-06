@@ -1,0 +1,17 @@
+/*
+    create table `table_name` 
+*/
+export function up(knex) {
+  return knex.schema.createTable('table_name', table => {
+    table.increments('id');
+    table.timestamps(true,true);
+    table.boolean("deleted").defaultTo(false);
+  });
+}
+
+/*
+ Drop `table_name`.
+ */
+export function down(knex) {
+  return knex.schema.dropTable('table_name');
+}

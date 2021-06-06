@@ -1,0 +1,26 @@
+{
+  "name": "daregram",
+  "version": "1.0.0",
+  "description": "A Todo Application for the Professionals.",
+  "main": "src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js",
+    "make:migration": "npx knex migrate:make --knexfile src/knexfile.js",
+    "migrate": "npx knex migrate:latest --knexfile src/knexfile.js"
+  },
+  "author": "Pukar Giri (DaringJoker)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.6",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
