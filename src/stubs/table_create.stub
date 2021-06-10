@@ -1,7 +1,7 @@
 /*
-    create table `table_name` 
+    create table `table_name`
 */
-export function up(knex) {
+exports.up function up(knex) {
   return knex.schema.createTable('table_name', table => {
     table.increments('id');
     table.timestamps(true,true);
@@ -12,6 +12,6 @@ export function up(knex) {
 /*
  Drop `table_name`.
  */
-export function down(knex) {
+exports.down function down(knex) {
   return knex.schema.dropTable('table_name');
 }
