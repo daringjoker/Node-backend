@@ -1,13 +1,14 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../validator");
 const UserAccounts = require("../models/accounts");
 const userController = require("../controllers/userController");
-const jwt = require("jsonwebtoken");
+
+const log = require("../middlewares/logger");
 
 apiRouter = express.Router();
 
-apiRouter.use(express.json());
 apiRouter.use("/user", userController);
 
 /*
@@ -53,7 +54,7 @@ apiRouter.post("/login", (req, res) => {
               { ...payload, persistentToken: true },
               "IamSECRET",
               {
-                expiresIn: "10d",
+                expiresIn: "7d",
               }
             );
           } else {
@@ -98,7 +99,6 @@ apiRouter.post("/register", (req, res) => {
   bcrypt.hash(pass, 10, function (err, hash) {
     if (err) throw err;
     else {
-      
       UserAccounts.addAccount(username, email, hash)
         .then(() => {
           res.json({
