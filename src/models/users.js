@@ -1,68 +1,24 @@
 const knex = require("../db");
 const bcrypt = require("bcrypt");
 
-const defaultProfile = {
-  first_name: "John",
-  last_name: "Doe",
-  profile_picture: "johnDoe.png",
-  bio: "A Deep Diver Of nothingness!!",
-  cover_image: "defaultCover.png",
-  is_active: true,
-  last_seen: Date.now(),
-  key_color: "#165baa",
-  is_deleted: false,
-  is_verified: false,
-  birth_date: Date.now(),
-  gender: "male",
-};
-
-class UserProfiles {
-  static initializeProfile(username) {
-    let id = 0;
-    knex("accounts")
-      .select("id")
-      .where("username", username)
-      .andWhere("deleted", false)
-      .then((res) => {
-        id = res[0].id;
-        knex("profiles")
-          .insert({ ...defaultProfile, accounts_id: res[0].id })
-          .then((res) => {
-            console.log(
-              "initialized a new user for account id " +
-                id +
-                " and username " +
-                username
-            );
-          });
-      });
-  }
-
-
-  static getProfileByUsername(value) {
+class Users {
+   static getUserByField(field, value) {
     return new Promise((resolve, reject) => {
-      knex("accounts")
-        .select("id")
-        .where("username", value)
-        .andWhere("deleted", false)
+      knex("users")
+        .select()
+        .where(field, value)
+        .andWhere("is_deleted", false)
         .then((res) => {
-          if (res[0]) {
-            knex("profiles")
-              .select()
-              .where("accounts_id", res[0].id)
-              .then((res) => {
-                resolve(res[0]);
-              });
-          }
+          resolve(res[0]);
         });
     });
   }
-  static something(field, username, password) {
+  static verifyByField(field, value, password) {
     return new Promise((resolve, reject) => {
-      knex("accounts")
+      knex("users")
         .select("hash")
-        .where(field, username)
-        .andWhere("deleted", false)
+        .where(field, value)
+        .andWhere("is_deleted", false)
         .then((resp) => {
           if (resp.length <= 0) resolve(false);
           else {
@@ -78,30 +34,41 @@ class UserProfiles {
         });
     });
   }
-  static updateProfile(
-    username,
-    firstName,
-    lastName,
-    bio,
-    cover_image,
-    profile_image
-  ) {
+
+  static addAccount(data) {
+    let { username, email, hash, first_name, last_name, gender, birth_date } =
+      data;
     return new Promise((resolve, reject) => {
-      knex("accounts")
+      knex("users")
         .insert({
-          username: username,
-          email: email,
-          hash: hash,
-          deleted: false,
+          username,
+          email,
+          hash,
+          first_name,
+          last_name,
+          gender,
+          birth_date,
+          is_verified: false,
+          key_color: "#333333",
+          bio: "",
+          last_seen: Date(),
+          is_active: true,
+          is_deleted: false,
+          profile_picture:
+            gender === "male"
+              ? "/usercontent/images/johndoe.png"
+              : "/usercontent/images/janedoe.png",
+          cover_image: "/usercontent/images/defaultCover.png",
         })
         .then((resp) => {
           resolve();
         })
         .catch((err) => {
+          console.log(err);
           reject(err);
         });
     });
   }
 }
 
-module.exports = UserProfiles;
+module.exports = Users;

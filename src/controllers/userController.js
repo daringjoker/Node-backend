@@ -1,19 +1,24 @@
-const express = require("express");
 const bcrypt = require("bcrypt");
+const express = require("express");
+const users = require("../models/users");
 const { validateEmail } = require("../validator");
-const UserAccounts = require("../models/accounts");
-const UserProfiles = require("../models/users");
+const authenticate = require("../middlewares/authentication");
+const { sendSuccess, sendFailure } = require("../utiliities/responses");
 
 userController = express.Router();
 
+userController.get("/", authenticate, (req, res) => {
+  users
+    .getUserByField("username", req.verifiedUser.username)
+    .then((profile) => {
+      sendSuccess(res, "user retrieved successfully", profile);
+    });
+});
+
 userController.get("/:username", (req, res) => {
   let username = req.params.username;
-  UserProfiles.getProfileByUsername(username).then((profile) => {
-    res.json({
-      status: "success",
-      msg: "User Retrieved Successfully",
-      data: profile,
-    });
+  users.getUserByField("username", username).then((profile) => {
+    sendSuccess(res, "user retrieved successfully", profile);
   });
 });
 

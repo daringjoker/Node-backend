@@ -2,9 +2,11 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../validator");
-const UserAccounts = require("../models/accounts");
+const UserAccounts = require("../models/users");
 const userController = require("../controllers/userController");
-
+const { sendSuccess, sendFailure } = require("../utiliities/responses");
+const validateSchema = require("../middlewares/validator");
+const { loginSchema, signupSchema } = require("../validator/users");
 const log = require("../middlewares/logger");
 
 apiRouter = express.Router();
@@ -17,22 +19,15 @@ username/email
 password
 */
 
-apiRouter.post("/login", (req, res) => {
+apiRouter.post("/login", validateSchema(loginSchema), (req, res) => {
   let username = req.body.username;
   let field = "";
-  if (/^[a-z0-9]{5,30}$/.test(username)) {
+  if (/^[a-z0-9_]{5,20}$/.test(username)) {
     field = "username";
   } else if (validateEmail(username)) {
     field = "email";
   } else {
-    //suplied username does not satisfy the username or email specification
-    //the request must be declared invalid.
-    res.status(400);
-    res.json({
-      status: "failed",
-      msg: "Invalid username or email",
-      data: [],
-    });
+    sendFailure(res, "invalid email or username", [], 400);
   }
   UserAccounts.verifyByField(field, req.body.username, req.body.password).then(
     (verified) => {
@@ -66,19 +61,13 @@ apiRouter.post("/login", (req, res) => {
               }
             );
           }
-          res.json({
-            status: "success",
-            msg: "login Successful",
-            data: { transactionToken, persistentToken },
+          sendSuccess(res, "login Successful!", {
+            transactionToken,
+            persistentToken,
           });
         });
       } else {
-        res.status(401);
-        res.json({
-          status: "failed",
-          msg: `${field} or password did not match`,
-          data: [],
-        });
+        sendFailure(res, `${field} or password did not match`, [], 401);
       }
     }
   );
@@ -92,28 +81,17 @@ apiRouter.post("/login", (req, res) => {
   }
   hash is obtained from the password using the middleware
 */
-apiRouter.post("/register", (req, res) => {
-  let username = req.body.username;
-  let email = req.body.email;
+apiRouter.post("/register", validateSchema(signupSchema), (req, res) => {
   let pass = req.body.password;
   bcrypt.hash(pass, 10, function (err, hash) {
     if (err) throw err;
     else {
-      UserAccounts.addAccount(username, email, hash)
+      UserAccounts.addAccount({ ...req.body, hash })
         .then(() => {
-          res.json({
-            status: "success",
-            msg: "registration Successful!!",
-            data: [],
-          });
+          sendSuccess(res, "registration Successful!");
         })
         .catch((err) => {
-          res.status(400);
-          res.json({
-            status: "failed",
-            msg: "could not Create a new userAccount",
-            data: err,
-          });
+          sendFailure(res, "Could not register new user", err, 400);
         });
     }
   });
@@ -124,17 +102,9 @@ apiRouter.post("/refresh", (req, res) => {
   jwt.verify(tokens.persistentToken, "IamSECRET", (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError")
-        res.json({
-          status: "failed",
-          msg: "Persistent Token Expired",
-          data: [],
-        });
+        sendFailure(res, "Persistent Token Expired!");
       else {
-        res.json({
-          status: "failed",
-          msg: err.message + " for Persistent Token",
-          data: [],
-        });
+        sendFailure(res, err.msg + " for Persistent Token");
       }
     } else {
       jwt.verify(tokens.transactionToken, "IamSECRET", (err, decoded) => {
@@ -153,35 +123,19 @@ apiRouter.post("/refresh", (req, res) => {
                 let newToken = jwt.sign(payload, "IamSECRET", {
                   expiresIn: "10m",
                 });
-                res.json({
-                  status: "success",
-                  msg: "Token Refreshed Successfully",
-                  data: {
-                    transactionToken: newToken,
-                    persistentToken: tokens.persistentToken,
-                  },
+                sendSuccess(res, "Token Refreshed Successfully!", {
+                  persistentToken: tokens.persistentToken,
+                  newToken,
                 });
               } else {
-                res.json({
-                  status: "failed",
-                  msg: "user has been invalidated",
-                  data: [],
-                });
+                sendFailure(res, "The User has been Invalidated!");
               }
             });
           } else {
-            res.json({
-              status: "failed",
-              msg: err.message + " for transaction token",
-              data: [],
-            });
+            sendFailure(res, err.msg + " for transaction token");
           }
         } else {
-          res.json({
-            status: "failed",
-            msg: "Transaction Token has not Expired Yet",
-            data: [],
-          });
+          sendFailure(res, "Transaction token has not expired yet");
         }
       });
     }

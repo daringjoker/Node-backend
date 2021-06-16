@@ -1,4 +1,4 @@
 {
   "verbose": false,
-  "ignore": ["*.sqlite3"]
+  "ignore": ["*.sqlite3","useruploads/*"]
 }
