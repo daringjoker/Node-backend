@@ -1,5 +1,6 @@
 const express = require("express");
 const chanServices = require("../services/chans");
+const threadServices = require("../services/thread");
 const { sendSuccess, sendFailure } = require("../utiliities/responses");
 
 const getAll = async (req, res) => {
@@ -10,6 +11,12 @@ const getAll = async (req, res) => {
   } else {
     sendFailure(res, "Couldnot find all chans");
   }
+};
+const getThreads = async (req, res) => {
+  let identifier = req.params.identifier;
+  let allThreads = await threadServices.getAllInChan(identifier);
+  if (allThreads) sendSuccess(res, "Successfully Retrieved all Threads", allThreads);
+  else sendFailure(res, "Threads Retreival Failed");
 };
 
 const create = async (req, res) => {
@@ -23,4 +30,5 @@ const create = async (req, res) => {
 module.exports = {
   getAll,
   create,
+  getThreads,
 };

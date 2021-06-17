@@ -2,7 +2,7 @@ const chansModel = require("../models/chans");
 const userServices = require("./user");
 
 const getAll = async () => {
-  let chans = chansModel.getAll();
+  let chans = chansModel.getVerified();
   if (chans) return chans;
   else return false;
 };

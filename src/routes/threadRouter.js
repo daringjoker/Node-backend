@@ -5,7 +5,7 @@ const authenticate = require("../middlewares/authentication");
 const threadController = require("../controllers/threadController");
 
 const threadRouter = express.Router();
-threadRouter.get("/:chan_id", authenticate, threadController.getAll);
+threadRouter.get("/:threadId", authenticate, threadController.getAll);
 threadRouter.put("/", authenticate, validateSchema(threadCreateSchema), threadController.create);
 
 module.exports = threadRouter;

@@ -1,89 +1,30 @@
 const knex = require("../db");
-class Posts {
-  static createNew(creatorId,) {
-    let id = 0;
-    knex("accounts")
-      .select("id")
-      .where("username", username)
-      .andWhere("deleted", false)
-      .then((res) => {
-        id = res[0].id;
-        knex("profiles")
-          .insert({ ...defaultProfile, accounts_id: res[0].id })
-          .then((res) => {
-            console.log(
-              "initialized a new user for account id " +
-                id +
-                " and username " +
-                username
-            );
-          });
-      });
+
+class postsModel {
+  static async create(data) {
+    try {
+      let userData = await knex("posts").insert(data, "id");
+      return userData;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+  static async getById(id) {
+    let userData = await knex("posts").select().where("id", id).andWhere("is_deleted", false);
+    return userData.length > 1 ? userData : userData[0];
   }
 
-  static getProfileByUsername(value) {
-    return new Promise((resolve, reject) => {
-      knex("accounts")
-        .select("id", "username", "email")
-        .where("username", value)
-        .andWhere("deleted", false)
-        .then((res) => {
-          if (res[0]) {
-            knex("profiles")
-              .select()
-              .where("accounts_id", res[0].id)
-              .then((newres) => {
-                resolve({ ...res[0], ...newres[0], id: null });
-              });
-          }
-        });
-    });
+  static async getByUser(user_id) {
+    let userData = await knex("posts").select().where("user_id", user_id).andWhere("is_deleted", false);
+    if (userData) return userData;
+    else return false;
   }
-  static something(field, username, password) {
-    return new Promise((resolve, reject) => {
-      knex("accounts")
-        .select("hash")
-        .where(field, username)
-        .andWhere("deleted", false)
-        .then((resp) => {
-          if (resp.length <= 0) resolve(false);
-          else {
-            let realHash = resp[0].hash;
-            bcrypt.compare(password, realHash, (err, match) => {
-              if (err) throw err;
-              else {
-                if (match) resolve(true);
-                else resolve(false);
-              }
-            });
-          }
-        });
-    });
-  }
-  static updateProfile(
-    username,
-    firstName,
-    lastName,
-    bio,
-    cover_image,
-    profile_image
-  ) {
-    return new Promise((resolve, reject) => {
-      knex("accounts")
-        .insert({
-          username: username,
-          email: email,
-          hash: hash,
-          deleted: false,
-        })
-        .then((resp) => {
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  static async getByThread(thread_id) {
+    let userData = await knex("posts").select().where("thread_id", thread_id).andWhere("is_deleted", false);
+    if (userData) return userData;
+    else return false;
   }
 }
 
-module.exports = Posts;
+module.exports = postsModel;

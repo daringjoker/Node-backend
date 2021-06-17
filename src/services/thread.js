@@ -1,11 +1,13 @@
+const chansModel = require("../models/chans");
 const threadsModel = require("../models/thread");
 const create = async (data, creator) => {
   let result = await threadsModel.create({ ...data, creator });
   if (result) return result;
   else return false;
 };
-const getAllInChan = async (chan_id) => {
-  let result = await threadsModel.getAllByChan(chan_id);
+const getAllInChan = async (identifier) => {
+  let chanId = await chansModel.getId(identifier);
+  let result = await threadsModel.getAllByChan(chanId);
   if (result) return result;
   else return false;
 };

@@ -7,4 +7,5 @@ const chanController = require("../controllers/chanController");
 const chanRouter = express.Router();
 chanRouter.get("/", authenticate, chanController.getAll);
 chanRouter.put("/", authenticate, validateSchema(chanCreateSchema), chanController.create);
+chanRouter.get("/:identifier", authenticate, chanController.getThreads);
 module.exports = chanRouter;

@@ -21,18 +21,9 @@ class chansModel {
     else return false;
   }
 
-  static async getAll() {
-    let unverified = await this.getVerifiedChans();
-    let verified = await this.getVerifiedChans();
-    return {
-      verified,
-      unverified,
-    };
-  }
-
   static async getId(identifier) {
     let userData = await knex("chans").select("id").where("identifier", identifier).andWhere("is_deleted", false);
-    return userData.length > 1 ? userData : userData[0];
+    return userData.length > 1 ? userData : userData[0].id;
   }
   static async getUnverified() {
     let userData = await knex("chans").select().where("approved", false).andWhere("is_deleted", false);
