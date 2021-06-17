@@ -9,7 +9,7 @@ exports.up = function up(knex) {
     table.foreign("blocker").references("users.id");
     table.integer("blocked");
     table.foreign("blocked").references("users.id");
-    table.boolean("deleted").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 

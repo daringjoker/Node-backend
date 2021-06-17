@@ -16,8 +16,7 @@ exports.up = function up(knex) {
     table.string("media_link", 2048);
     table.enu("media_type", ["image", "video", "audio", "link", "doc"]);
     table.timestamps(true, true);
-    table.boolean("deleted").defaultTo(false);
-    table.boolean("approved").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 

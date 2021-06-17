@@ -9,7 +9,7 @@ exports.up = function up(knex) {
     table.integer("user_id");
     table.foreign("user_id").references("users.id");
     table.timestamps(true, true);
-    table.boolean("deleted").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 

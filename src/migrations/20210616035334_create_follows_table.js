@@ -9,7 +9,7 @@ exports.up = function up(knex) {
     table.foreign("follower").references("users.id");
     table.integer("followed");
     table.foreign("followed").references("users.id");
-    table.boolean("deleted").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 

@@ -1,5 +1,5 @@
 function sendFailure(res, msg, data = [], responseCode = 500) {
-  res.status = responseCode;
+  res.status(responseCode);
   res.json({
     status: "failed",
     msg: msg,
@@ -8,7 +8,7 @@ function sendFailure(res, msg, data = [], responseCode = 500) {
 }
 
 function sendSuccess(res, msg, data = [], responseCode = 200) {
-  res.status = responseCode;
+  res.status(responseCode);
   res.json({
     status: "success",
     msg: msg,

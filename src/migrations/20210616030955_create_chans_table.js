@@ -6,6 +6,7 @@ exports.up = function up(knex) {
     table.increments("id");
     table.string("name", 200);
     table.string("identifier", 10);
+    table.unique("identifier");
     table.string("description", 2048);
     table.string("rules", 1024);
     table.integer("admin_id");
@@ -14,7 +15,8 @@ exports.up = function up(knex) {
     table.enu("visibility", ["public", "privileged", "private", "secret"]);
     table.timestamps(true, true);
     table.boolean("archived").defaultTo(false);
-    table.boolean("deleted").defaultTo(false);
+    table.boolean("approved").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 

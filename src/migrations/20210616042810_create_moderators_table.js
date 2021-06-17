@@ -1,8 +1,8 @@
 /*
-    create table `table_name`
+    create table `moderators`
 */
 exports.up = function up(knex) {
-  return knex.schema.createTable("table_name", (table) => {
+  return knex.schema.createTable("moderators", (table) => {
     table.increments("id");
     table.timestamps(true, true);
     table.integer("moderator_for");
@@ -10,13 +10,13 @@ exports.up = function up(knex) {
     table.integer("user_id");
     table.foreign("user_id").references("users.id");
     table.integer("privilege_level");
-    table.boolean("deleted").defaultTo(false);
+    table.boolean("is_deleted").defaultTo(false);
   });
 };
 
 /*
- Drop `table_name`.
+ Drop `moderators`.
  */
 exports.down = function down(knex) {
-  return knex.schema.dropTable("table_name");
+  return knex.schema.dropTable("moderators");
 };
