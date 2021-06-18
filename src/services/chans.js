@@ -1,10 +1,11 @@
 const chansModel = require("../models/chans");
 const userServices = require("./user");
 
-const getAll = async () => {
+const getAll = async (user) => {
   let chans = chansModel.getVerified();
-  if (chans) return chans;
-  else return false;
+  if (chans) {
+    return chans;
+  } else return false;
 };
 
 const createNew = async (data, username) => {

@@ -25,6 +25,16 @@ class postsModel {
     if (userData) return userData;
     else return false;
   }
+  static async getAll() {
+    let userData = await knex("posts").select().where("is_deleted", false);
+    if (userData) return userData;
+    else return false;
+  }
+  static async remove(post_id) {
+    let userData = await knex("posts").update("is_deleted", true).where("id", post_id);
+    if (userData) return userData;
+    else return false;
+  }
 }
 
 module.exports = postsModel;

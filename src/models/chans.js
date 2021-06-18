@@ -14,7 +14,10 @@ class chansModel {
     let userData = await knex("chans").select().where("identifier", identifier).andWhere("is_deleted", false);
     return userData.length > 1 ? userData : userData[0];
   }
-
+  static async getById(id) {
+    let userData = await knex("chans").select().where("id", id).andWhere("is_deleted", false);
+    return userData.length > 1 ? userData : userData[0];
+  }
   static async getVerified() {
     let userData = await knex("chans").select().where("approved", true).andWhere("is_deleted", false);
     if (userData) return userData;

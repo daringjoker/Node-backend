@@ -10,14 +10,15 @@ const create = async (req, res) => {
   else sendFailure(res, "Thread Creation Failed");
 };
 
-const getAll = async (req, res) => {
+
+const getAllPosts = async (req, res) => {
   const thread_id = req.params.threadId;
-  const allThreads = await postServices.getAllPostsInThread(thread_id);
-  if (allThreads) sendSuccess(res, "Succesfully Obtained All posts" + thread_id, allThreads);
+  const requester = req.verifiedUser.username;
+  const allThreads = await postServices.getAllPostsInThread(thread_id, requester);
+  if (allThreads) sendSuccess(res, "Succesfully Obtained All posts", allThreads);
   else sendFailure(res, "Thread Retreival Failed");
 };
-
 module.exports = {
   create,
-  getAll,
+  getAllPosts,
 };

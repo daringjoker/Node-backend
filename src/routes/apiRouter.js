@@ -1,6 +1,7 @@
 const express = require("express");
 const userRouter = require("./userRouter");
 const chanRouter = require("./chanRouter");
+const postRouter = require("./postRouter");
 const threadRouter = require("./threadRouter");
 const validateSchema = require("../middlewares/validator");
 const authController = require("../controllers/authController");
@@ -13,6 +14,8 @@ apiRouter.use("/user", userRouter);
 apiRouter.use("/chans", chanRouter);
 
 apiRouter.use("/threads", threadRouter);
+
+apiRouter.use("/post", postRouter);
 
 apiRouter.post("/login", validateSchema(loginSchema), authController.login);
 
